@@ -36,7 +36,7 @@ public class SybaseIqNativeBulkLoader extends SybaseIqBulkLoader
     public SybaseIqNativeBulkLoader(SybaseDatabaseType sybaseDatabaseType, String dbLoadDir, String appLoadDir, boolean nativeClientTransferMode)
     {
         super(sybaseDatabaseType, dbLoadDir, appLoadDir);
-        this.nativeClientTransferMode = nativeClientTransferMode
+        this.nativeClientTransferMode = nativeClientTransferMode;
     }
 
     private static boolean isNativeClientTransferModeFromDatabaseType(SybaseDatabaseType sybaseDatabaseType)
