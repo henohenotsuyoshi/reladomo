@@ -30,24 +30,34 @@ public class SybaseIqNativeBulkLoader extends SybaseIqBulkLoader
 
     public SybaseIqNativeBulkLoader(SybaseDatabaseType sybaseDatabaseType, String dbLoadDir, String appLoadDir)
     {
-        super(sybaseDatabaseType, dbLoadDir, appLoadDir);
-        this.setNativeClientTransferModeFromDatabaseType(sybaseDatabaseType);
+        this(sybaseDatabaseType, dbLoadDir, appLoadDir, isNativeClientTransferModeFromDatabaseType(sybaseDatabaseType));
     }
 
-    private void setNativeClientTransferModeFromDatabaseType(SybaseDatabaseType sybaseDatabaseType)
+    public SybaseIqNativeBulkLoader(SybaseDatabaseType sybaseDatabaseType, String dbLoadDir, String appLoadDir, boolean nativeClientTransferMode)
     {
-        String databaseTypeName = sybaseDatabaseType.getClass().getSimpleName();
-        nativeClientTransferMode = databaseTypeName.toLowerCase().contains("native");
+        super(sybaseDatabaseType, dbLoadDir, appLoadDir);
+        this.nativeClientTransferMode = nativeClientTransferMode
     }
 
+    private static boolean isNativeClientTransferModeFromDatabaseType(SybaseDatabaseType sybaseDatabaseType)
+    {
+        for (Class c = sybaseDatabaseType.getClass();!c.equals( SybaseDatabaseType.class );c = c.getSuperclass())
+        {
+            if(c.getSimpleName().toLowerCase().contains("native"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void execute(Connection connection) throws BulkLoaderException, SQLException
     {
-
         if (!this.nativeClientTransferMode)
         {
             super.execute(connection);
+            return;
         }
         // transfer file using native driver and client file
         // Flush the writer to ensure everything is written out to the BCP file
